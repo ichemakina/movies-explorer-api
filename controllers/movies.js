@@ -1,4 +1,8 @@
+const mongoose = require('mongoose');
 const Movie = require('../models/movie');
+
+const NotFoundError = require('../utils/erros.js/notFoundError');
+const ValidationError = require('../utils/erros.js/validationError');
 
 module.exports.getMovies = (req, res, next) => {
   Movie.find({})
@@ -36,7 +40,12 @@ module.exports.createMovie = (req, res, next) => {
     owner: req.user._id,
   })
     .then((movie) => res.status(201).send({ data: movie }))
-    .catch((err) => next(err));
+    .catch((err) => {
+      if (err instanceof mongoose.Error.ValidationError) {
+        return next(new ValidationError('Переданы некорректные данные'));
+      }
+      return next(err);
+    });
 };
 
 module.exports.deleteMovie = (req, res, next) => {
@@ -48,8 +57,14 @@ module.exports.deleteMovie = (req, res, next) => {
         .findByIdAndDelete(movieId)
         .orFail();
     })
-    .then(() => res.send({ message: 'Карточка удалена' }))
+    .then(() => res.send({ message: 'Фильм удален' }))
     .catch((err) => {
-      console.log(err);
+      if (err instanceof mongoose.Error.DocumentNotFoundError) {
+        return next(new NotFoundError('Фильм не найден'));
+      }
+      if (err instanceof mongoose.Error.CastError) {
+        return next(new ValidationError('Передан некорректный id'));
+      }
+      return next(err);
     });
 };

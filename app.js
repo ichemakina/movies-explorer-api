@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 
 const users = require('./routes/users');
 const movies = require('./routes/movies');
+const handleError = require('./middlewares/handleError');
 
 const { PORT = 3000 } = process.env;
 
@@ -24,5 +25,7 @@ app.use((req, res, next) => {
 
 app.use('/users', users);
 app.use('/movies', movies);
+
+app.use(handleError);
 
 app.listen(PORT);
