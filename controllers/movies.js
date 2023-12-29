@@ -3,6 +3,7 @@ const Movie = require('../models/movie');
 
 const NotFoundError = require('../utils/erros/notFoundError');
 const ValidationError = require('../utils/erros/validationError');
+const ForbiddenError = require('../utils/erros/forbiddenError');
 
 module.exports.getMovies = (req, res, next) => {
   Movie.find({})
@@ -52,10 +53,12 @@ module.exports.deleteMovie = (req, res, next) => {
   const { movieId } = req.params;
   Movie.findById(movieId)
     .orFail()
-    .then(() => {
-      Movie
-        .findByIdAndDelete(movieId)
-        .orFail();
+    .then((movie) => {
+      if (movie.owner.toString() !== req.user._id) {
+        return Promise.reject(new ForbiddenError('Недостаточно прав'));
+      }
+      return Movie
+        .findByIdAndDelete(movieId);
     })
     .then(() => res.send({ message: 'Фильм удален' }))
     .catch((err) => {
