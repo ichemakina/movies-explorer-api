@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 const Movie = require('../models/movie');
 
-const NotFoundError = require('../utils/erros.js/notFoundError');
-const ValidationError = require('../utils/erros.js/validationError');
+const NotFoundError = require('../utils/erros/notFoundError');
+const ValidationError = require('../utils/erros/validationError');
 
 module.exports.getMovies = (req, res, next) => {
   Movie.find({})

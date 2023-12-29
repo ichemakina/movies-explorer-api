@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 
 const users = require('./routes/users');
 const movies = require('./routes/movies');
+const { signup, signin } = require('./controllers/users');
+const auth = require('./middlewares/auth');
 const handleError = require('./middlewares/handleError');
 
 const { PORT = 3000 } = process.env;
@@ -14,14 +16,10 @@ app.use(express.urlencoded({ extended: true }));
 
 mongoose.connect('mongodb://127.0.0.1:27017/bitfilmsdb');
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: '658e94ffbd7f160026df2c64',
+app.post('/signup', signup);
+app.post('/signin', signin);
 
-  };
-
-  next();
-});
+app.use(auth);
 
 app.use('/users', users);
 app.use('/movies', movies);
