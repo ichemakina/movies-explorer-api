@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 
 const users = require('./routes/users');
+const movies = require('./routes/movies');
 
 const { PORT = 3000 } = process.env;
 
@@ -22,5 +23,6 @@ app.use((req, res, next) => {
 });
 
 app.use('/users', users);
+app.use('/movies', movies);
 
 app.listen(PORT);
