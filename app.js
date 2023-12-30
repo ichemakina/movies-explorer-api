@@ -13,6 +13,7 @@ const handleError = require('./middlewares/handleError');
 const { validateSignin, validateSignup } = require('./middlewares/validation');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const cors = require('./middlewares/cors');
+const NotFoundError = require('./utils/erros/notFoundError');
 
 const { NODE_ENV, PORT, DATABASE } = process.env;
 
@@ -28,6 +29,8 @@ app.use(requestLogger);
 
 app.post('/signup', validateSignup, signup);
 app.post('/signin', validateSignin, signin);
+
+app.use((req, res, next) => next(new NotFoundError('Некорректный URL')));
 
 app.use(auth);
 
