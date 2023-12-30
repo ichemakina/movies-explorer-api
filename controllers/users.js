@@ -29,7 +29,6 @@ module.exports.getUser = (req, res, next) => {
 module.exports.updateUser = (req, res, next) => {
   const { name, email } = req.body;
   User.findByIdAndUpdate(req.user._id, { name, email }, { new: true, runValidators: true })
-    .orFail()
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.code === 11000) {
