@@ -6,7 +6,7 @@ const ValidationError = require('../utils/erros/validationError');
 const ForbiddenError = require('../utils/erros/forbiddenError');
 
 module.exports.getMovies = (req, res, next) => {
-  Movie.find({})
+  Movie.find({ owner: req.user._id })
     .then((movies) => res.send({ data: movies }))
     .catch((err) => next(err));
 };
