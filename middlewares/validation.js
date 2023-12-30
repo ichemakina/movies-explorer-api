@@ -18,23 +18,24 @@ const validateSignup = celebrate({
 
 const validateCreateMovie = celebrate({
   body: Joi.object().keys({
-    country: Joi.string(),
-    director: Joi.string(),
-    duration: Joi.number(),
-    year: Joi.string(),
-    description: Joi.string(),
-    image: Joi.string().regex(URL_PATTERN),
-    trailerLink: Joi.string().regex(URL_PATTERN),
-    thumbnail: Joi.string().regex(URL_PATTERN),
-    movieId: Joi.number(),
-    nameRU: Joi.string(),
-    nameEN: Joi.string(),
+    country: Joi.string().required(),
+    director: Joi.string().required(),
+    duration: Joi.number().required(),
+    year: Joi.string().required(),
+    description: Joi.string().required(),
+    image: Joi.string().required().regex(URL_PATTERN),
+    trailerLink: Joi.string().required().regex(URL_PATTERN),
+    thumbnail: Joi.string().required().regex(URL_PATTERN),
+    movieId: Joi.number().required(),
+    nameRU: Joi.string().required(),
+    nameEN: Joi.string().required(),
   }),
 });
 
 const validateMovieId = celebrate({
   params: Joi.object().keys({
-    movieId: Joi.string().alphanum().length(24).hex(),
+    movieId: Joi.string().required().alphanum().length(24)
+      .hex(),
   }),
 });
 

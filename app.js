@@ -30,12 +30,12 @@ app.use(requestLogger);
 app.post('/signup', validateSignup, signup);
 app.post('/signin', validateSignin, signin);
 
-app.use((req, res, next) => next(new NotFoundError('Некорректный URL')));
-
 app.use(auth);
 
 app.use('/users', users);
 app.use('/movies', movies);
+
+app.use((req, res, next) => next(new NotFoundError('Некорректный URL')));
 
 app.use(errorLogger);
 app.use(errors());
