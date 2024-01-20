@@ -5,7 +5,6 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
-const Created = 200;
 const NotFoundError = require('../utils/erros/notFoundError');
 const ValidationError = require('../utils/erros/validationError');
 const ConflictError = require('../utils/erros/conflictError');
@@ -29,7 +28,7 @@ module.exports.getUser = (req, res, next) => {
 module.exports.updateUser = (req, res, next) => {
   const { name, email } = req.body;
   User.findByIdAndUpdate(req.user._id, { name, email }, { new: true, runValidators: true })
-    .then((user) => res.send({ data: user }))
+    .then((user) => res.send(user))
     .catch((err) => {
       if (err.code === 11000) {
         return next(new ConflictError('Пользователь с таким email уже существует'));
@@ -50,11 +49,16 @@ module.exports.signup = (req, res, next) => {
     .then((hash) => User.create({
       name, email, password: hash,
     }))
-    .then((user) => res.status(Created).send({
-      email: user.email,
-      name: user.name,
-      _id: user._id,
-    }))
+    .then((user) => {
+      const token = jwt.sign(
+        { _id: user._id },
+        NODE_ENV === 'production' ? JWT_SECRET : 'dev-token',
+        { expiresIn: '7d' },
+      );
+      return res.send({
+        token,
+      });
+    })
     .catch((err) => {
       if (err.code === 11000) {
         return next(new ConflictError('Пользователь с таким email уже существует'));
